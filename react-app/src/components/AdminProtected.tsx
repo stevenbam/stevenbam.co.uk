@@ -129,13 +129,22 @@ const AdminProtected: React.FC<AdminProtectedProps> = ({ children, onAuthenticat
 
   const correctPassword = 'steven2024';
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (e?: any) => {
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    }
+    
     if (password === correctPassword) {
       onAuthenticated();
       setShowModal(false);
       setError('');
       setPassword('');
+      
+      // Clean up URL if it has query parameters
+      if (window.location.search) {
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, '', newUrl);
+      }
     } else {
       setError('Incorrect password. Please try again.');
       setPassword('');
@@ -188,24 +197,29 @@ const AdminProtected: React.FC<AdminProtectedProps> = ({ children, onAuthenticat
             <Title>Admin Access Required</Title>
             <Subtitle>This action requires admin privileges</Subtitle>
             
-            <PasswordForm onSubmit={handleSubmit}>
+            <div>
               <PasswordInput
                 type="password"
                 placeholder="Enter admin password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                required
                 autoFocus
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleSubmit(e as any);
+                  }
+                }}
               />
               <ButtonGroup>
-                <SubmitButton type="submit">
+                <SubmitButton type="button" onClick={handleSubmit}>
                   Authenticate
                 </SubmitButton>
                 <CancelButton type="button" onClick={handleCancel}>
                   Cancel
                 </CancelButton>
               </ButtonGroup>
-            </PasswordForm>
+            </div>
             
             {error && <ErrorMessage>{error}</ErrorMessage>}
           </PasswordCard>

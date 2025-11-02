@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { photoApi, Photo } from '../services/api';
 import AdminProtected from './AdminProtected';
+import EngagementPanel from './EngagementPanel';
 
 const PhotosContainer = styled.div`
   max-width: 1000px;
@@ -315,6 +316,11 @@ const Photos: React.FC = () => {
                   </DeleteButton>
                 </AdminProtected>
               </PhotoInfo>
+              <EngagementPanel 
+                contentType="photo"
+                contentId={photo.id}
+                initialMode="comments"
+              />
             </PhotoCard>
           ))
         )}

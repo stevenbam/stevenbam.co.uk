@@ -65,6 +65,58 @@ switch (true) {
         deletePhoto($pdo, $matches[1]);
         break;
 
+    // Comment endpoints
+    case $method === 'GET' && preg_match('#^/api/comments/(blog|photo)/(\d+)$#', $path, $matches):
+        require_once 'comments.php';
+        getComments($pdo, $matches[1], $matches[2]);
+        break;
+        
+    case $method === 'GET' && $path === '/api/comments/pending':
+        require_once 'comments.php';
+        getPendingComments($pdo);
+        break;
+        
+    case $method === 'POST' && $path === '/api/comments':
+        require_once 'comments.php';
+        createComment($pdo);
+        break;
+        
+    case $method === 'PUT' && preg_match('#^/api/comments/(\d+)/approve$#', $path, $matches):
+        require_once 'comments.php';
+        approveComment($pdo, $matches[1]);
+        break;
+        
+    case $method === 'DELETE' && preg_match('#^/api/comments/(\d+)$#', $path, $matches):
+        require_once 'comments.php';
+        deleteComment($pdo, $matches[1]);
+        break;
+
+    // Reaction endpoints
+    case $method === 'GET' && preg_match('#^/api/reactions/(blog|photo)/(\d+)$#', $path, $matches):
+        require_once 'reactions.php';
+        getReactions($pdo, $matches[1], $matches[2]);
+        break;
+        
+    case $method === 'GET' && preg_match('#^/api/reactions/(blog|photo)/(\d+)/user/(.+)$#', $path, $matches):
+        require_once 'reactions.php';
+        getUserReactions($pdo, $matches[1], $matches[2], urldecode($matches[3]));
+        break;
+        
+    case $method === 'POST' && $path === '/api/reactions':
+        require_once 'reactions.php';
+        toggleReaction($pdo);
+        break;
+        
+    case $method === 'GET' && $path === '/api/reactions/summary':
+        require_once 'reactions.php';
+        getReactionSummary($pdo);
+        break;
+        
+    case $method === 'DELETE' && preg_match('#^/api/reactions/(blog|photo)/(\d+)$#', $path, $matches):
+        require_once 'reactions.php';
+        clearReactions($pdo, $matches[1], $matches[2]);
+        break;
+
     // Default case - endpoint not found (like your C# 404 handling)
     default:
         http_response_code(404);

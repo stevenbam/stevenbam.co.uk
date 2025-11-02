@@ -59,6 +59,34 @@ CREATE TABLE IF NOT EXISTS Photos (
     INDEX idx_uploaded_date (UploadedDate)
 )";
 
+$createCommentsTable = "
+CREATE TABLE IF NOT EXISTS Comments (
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+    ContentType ENUM('blog', 'photo') NOT NULL,
+    ContentId INT NOT NULL,
+    AuthorName VARCHAR(100) NOT NULL,
+    AuthorEmail VARCHAR(255) NULL,
+    Content TEXT NOT NULL,
+    CreatedDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+    IsApproved BOOLEAN DEFAULT FALSE,
+    INDEX idx_content (ContentType, ContentId),
+    INDEX idx_created_date (CreatedDate)
+)";
+
+$createReactionsTable = "
+CREATE TABLE IF NOT EXISTS Reactions (
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+    ContentType ENUM('blog', 'photo') NOT NULL,
+    ContentId INT NOT NULL,
+    ReactionType VARCHAR(50) NOT NULL,
+    UserIdentifier VARCHAR(255) NOT NULL,
+    CreatedDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_reaction (ContentType, ContentId, ReactionType, UserIdentifier),
+    INDEX idx_content (ContentType, ContentId)
+)";
+
 $pdo->exec($createBlogPostsTable);
 $pdo->exec($createPhotosTable);
+$pdo->exec($createCommentsTable);
+$pdo->exec($createReactionsTable);
 ?>

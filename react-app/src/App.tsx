@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { AuthProvider } from './context/AuthContext';
 import Header from './components/Header';
@@ -9,6 +9,7 @@ import Hobbies from './components/Hobbies';
 import Contact from './components/Contact';
 import Blog from './components/Blog';
 import Photos from './components/Photos';
+import AdminModeration from './components/AdminModeration';
 
 const AppContainer = styled.div`
   min-height: 100vh;
@@ -43,6 +44,8 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/photos" element={<Photos />} />
+            <Route path="/admin" element={<AdminModeration />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </AppContainer>
       </Router>

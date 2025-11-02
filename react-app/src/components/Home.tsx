@@ -120,17 +120,17 @@ const Home: React.FC = () => {
           <CardIcon>🎵</CardIcon>
           <CardTitle>My Hobbies</CardTitle>
           <CardDescription>
-            Explore my passions beyond coding - drumming, painting, and running 
+            Explore my passions beyond coding - music, painting, and running 
             that keep my creative spirit alive.
           </CardDescription>
         </NavCard>
 
         <NavCard to="/blog">
           <CardIcon>📝</CardIcon>
-          <CardTitle>Tech Blog</CardTitle>
+          <CardTitle>Thoughts and Layers</CardTitle>
           <CardDescription>
-            Read my thoughts on technology trends, development insights, 
-            and lessons learned from the software engineering world.
+            Read and comment on my thoughts on everything I find interesting,
+            annoying, uplifting and just plain comical.
           </CardDescription>
         </NavCard>
 
@@ -138,8 +138,8 @@ const Home: React.FC = () => {
           <CardIcon>📸</CardIcon>
           <CardTitle>Photo Gallery</CardTitle>
           <CardDescription>
-            Browse through my collection of moments captured - from tech conferences 
-            to personal adventures and everything in between.
+            Browse through my collection of moments captured - memes, quotes,
+            pics from travels, and snapshots of life.
           </CardDescription>
         </NavCard>
 

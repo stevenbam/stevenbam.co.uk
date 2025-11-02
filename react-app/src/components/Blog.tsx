@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { blogApi, BlogPost } from '../services/api';
 import AdminProtected from './AdminProtected';
+import EngagementPanel from './EngagementPanel';
 
 const BlogContainer = styled.div`
   max-width: 800px;
@@ -156,6 +157,11 @@ const Blog: React.FC = () => {
     try {
       setLoading(true);
       const fetchedPosts = await blogApi.getAll();
+      console.log('DEBUG: Fetched posts from API:', fetchedPosts);
+      console.log('DEBUG: Number of posts:', fetchedPosts.length);
+      if (fetchedPosts.length > 0) {
+        console.log('DEBUG: First post:', fetchedPosts[0]);
+      }
       setPosts(fetchedPosts);
     } catch (err) {
       setError('Failed to load blog posts');
@@ -167,6 +173,12 @@ const Blog: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    e.stopPropagation();
+    
+    if (!isAdminAuthenticated) {
+      return; // Don't submit if not authenticated
+    }
+    
     if (newPost.title.trim() && newPost.content.trim()) {
       try {
         setLoading(true);
@@ -201,7 +213,7 @@ const Blog: React.FC = () => {
 
   return (
     <BlogContainer>
-      <BlogHeader>My Tech Blog</BlogHeader>
+      <BlogHeader>Thoughts and Layers</BlogHeader>
       
       <CreatePostSection>
         <h3 style={{ color: '#a78bfa', marginBottom: '1rem' }}>Create New Post</h3>
@@ -268,13 +280,15 @@ const Blog: React.FC = () => {
             No blog posts yet. Create your first post above!
           </div>
         ) : (
-          posts.map(post => (
-            <PostCard key={post.id}>
-              <PostTitle>{post.title}</PostTitle>
-              <PostMeta>
-                By {post.author} on {new Date(post.createdDate).toLocaleDateString()}
-              </PostMeta>
-              <PostContent>{post.content}</PostContent>
+          posts.map(post => {
+            console.log('DEBUG: Rendering post:', post);
+            return (
+              <PostCard key={post.id}>
+                <PostTitle>{post.title || 'NO TITLE'}</PostTitle>
+                <PostMeta>
+                  By {post.author || 'NO AUTHOR'} on {post.createdDate ? new Date(post.createdDate).toLocaleDateString() : 'NO DATE'}
+                </PostMeta>
+                <PostContent>{post.content || 'NO CONTENT'}</PostContent>
               <AdminProtected 
                 isAuthenticated={isAdminAuthenticated}
                 onAuthenticated={() => setIsAdminAuthenticated(true)}
@@ -286,8 +300,14 @@ const Blog: React.FC = () => {
                   {loading ? 'Deleting...' : 'Delete Post'}
                 </DeleteButton>
               </AdminProtected>
+              <EngagementPanel 
+                contentType="blog"
+                contentId={post.id}
+                initialMode="comments"
+              />
             </PostCard>
-          ))
+            );
+          })
         )}
       </PostsContainer>
     </BlogContainer>

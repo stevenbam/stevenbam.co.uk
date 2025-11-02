@@ -10,8 +10,20 @@ function getAllBlogPosts($pdo) {
         $stmt->execute();
         $posts = $stmt->fetchAll();
         
+        // Convert field names to match React expectations (camelCase)
+        $formattedPosts = array_map(function($post) {
+            return [
+                'id' => $post['Id'],
+                'title' => $post['Title'],
+                'content' => $post['Content'],
+                'author' => $post['Author'],
+                'createdDate' => $post['CreatedDate'],
+                'updatedDate' => $post['UpdatedDate']
+            ];
+        }, $posts);
+        
         // Return JSON response (like your C# Ok(posts))
-        echo json_encode($posts);
+        echo json_encode($formattedPosts);
     } catch (Exception $e) {
         // Error handling like your C# try/catch
         http_response_code(500);
@@ -34,8 +46,18 @@ function getBlogPost($pdo, $id) {
             return;
         }
         
+        // Convert field names to match React expectations (camelCase)
+        $formattedPost = [
+            'id' => $post['Id'],
+            'title' => $post['Title'],
+            'content' => $post['Content'],
+            'author' => $post['Author'],
+            'createdDate' => $post['CreatedDate'],
+            'updatedDate' => $post['UpdatedDate']
+        ];
+        
         // Same as your C# Ok(blogPost)
-        echo json_encode($post);
+        echo json_encode($formattedPost);
     } catch (Exception $e) {
         http_response_code(500);
         echo json_encode(['error' => 'Error retrieving blog post']);
@@ -72,8 +94,18 @@ function createBlogPost($pdo) {
         $stmt->execute([$newId]);
         $newPost = $stmt->fetch();
         
+        // Convert field names to match React expectations (camelCase)
+        $formattedPost = [
+            'id' => $newPost['Id'],
+            'title' => $newPost['Title'],
+            'content' => $newPost['Content'],
+            'author' => $newPost['Author'],
+            'createdDate' => $newPost['CreatedDate'],
+            'updatedDate' => $newPost['UpdatedDate']
+        ];
+        
         http_response_code(201);
-        echo json_encode($newPost);
+        echo json_encode($formattedPost);
     } catch (Exception $e) {
         http_response_code(500);
         echo json_encode(['error' => 'Error creating blog post']);
