@@ -1,0 +1,6 @@
+@StevenSiteAPI_HostAddress = http://localhost:5138
+
+GET {{StevenSiteAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
