@@ -142,7 +142,18 @@ function getReactionSummary($pdo) {
         $stmt->execute();
         $summary = $stmt->fetchAll();
         
-        echo json_encode($summary);
+        // Convert field names to match React expectations (camelCase)
+        $formattedSummary = array_map(function($item) {
+            return [
+                'contentType' => $item['ContentType'],
+                'contentId' => $item['ContentId'],
+                'reactionType' => $item['ReactionType'],
+                'count' => (int)$item['Count'],
+                'contentTitle' => $item['ContentTitle']
+            ];
+        }, $summary);
+        
+        echo json_encode($formattedSummary);
     } catch (Exception $e) {
         http_response_code(500);
         echo json_encode(['error' => 'Error retrieving reaction summary']);

@@ -14,7 +14,17 @@ function getComments($pdo, $contentType, $contentId) {
         $stmt->execute([$contentType, $contentId]);
         $comments = $stmt->fetchAll();
         
-        echo json_encode($comments);
+        // Convert field names to match React expectations (camelCase)
+        $formattedComments = array_map(function($comment) {
+            return [
+                'id' => $comment['Id'],
+                'authorName' => $comment['AuthorName'],
+                'content' => $comment['Content'],
+                'createdDate' => $comment['CreatedDate']
+            ];
+        }, $comments);
+        
+        echo json_encode($formattedComments);
     } catch (Exception $e) {
         http_response_code(500);
         echo json_encode(['error' => 'Error retrieving comments']);
@@ -39,7 +49,22 @@ function getPendingComments($pdo) {
         $stmt->execute();
         $comments = $stmt->fetchAll();
         
-        echo json_encode($comments);
+        // Convert field names to match React expectations (camelCase)
+        $formattedComments = array_map(function($comment) {
+            return [
+                'id' => $comment['Id'],
+                'contentType' => $comment['ContentType'],
+                'contentId' => $comment['ContentId'],
+                'authorName' => $comment['AuthorName'],
+                'authorEmail' => $comment['AuthorEmail'],
+                'content' => $comment['Content'],
+                'createdDate' => $comment['CreatedDate'],
+                'isApproved' => $comment['IsApproved'],
+                'contentTitle' => $comment['ContentTitle']
+            ];
+        }, $comments);
+        
+        echo json_encode($formattedComments);
     } catch (Exception $e) {
         http_response_code(500);
         echo json_encode(['error' => 'Error retrieving pending comments']);

@@ -164,6 +164,83 @@ const EmptyState = styled.div`
   padding: 3rem;
 `;
 
+const PhotoModal = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+`;
+
+const ModalContent = styled.div`
+  position: relative;
+  max-width: 95vw;
+  max-height: 95vh;
+  cursor: default;
+`;
+
+const ModalImage = styled.img`
+  max-width: 100%;
+  max-height: 95vh;
+  object-fit: contain;
+  border-radius: 10px;
+  box-shadow: 0 20px 60px rgba(139, 92, 246, 0.3);
+`;
+
+const CloseButton = styled.button`
+  position: absolute;
+  top: -50px;
+  right: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  color: #ffffff;
+  font-size: 1.5rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: #8b5cf6;
+  }
+`;
+
+const ModalCaption = styled.div`
+  position: absolute;
+  bottom: -60px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: #ffffff;
+  font-size: 1.1rem;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 1rem;
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+`;
+
+const ClickablePhotoImage = styled(PhotoImage)`
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.02);
+    filter: brightness(1.1);
+  }
+`;
+
 const Photos: React.FC = () => {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -172,10 +249,29 @@ const Photos: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
+  const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
 
   useEffect(() => {
     loadPhotos();
   }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && selectedPhoto) {
+        setSelectedPhoto(null);
+      }
+    };
+
+    if (selectedPhoto) {
+      document.addEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'unset';
+    };
+  }, [selectedPhoto]);
 
   const loadPhotos = async () => {
     try {
@@ -230,6 +326,20 @@ const Photos: React.FC = () => {
       console.error('Error deleting photo:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const openPhotoModal = (photo: Photo) => {
+    setSelectedPhoto(photo);
+  };
+
+  const closePhotoModal = () => {
+    setSelectedPhoto(null);
+  };
+
+  const handleModalClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      closePhotoModal();
     }
   };
 
@@ -300,7 +410,12 @@ const Photos: React.FC = () => {
         ) : (
           photos.map(photo => (
             <PhotoCard key={photo.id}>
-              <PhotoImage src={photoApi.getImageUrl(photo)} alt={photo.caption} />
+              <ClickablePhotoImage 
+                src={photoApi.getImageUrl(photo)} 
+                alt={photo.caption}
+                onClick={() => openPhotoModal(photo)}
+                title="Click to view full size"
+              />
               <PhotoInfo>
                 <PhotoCaption>{photo.caption}</PhotoCaption>
                 <PhotoDate>Uploaded on {new Date(photo.uploadedDate).toLocaleDateString()}</PhotoDate>
@@ -325,6 +440,21 @@ const Photos: React.FC = () => {
           ))
         )}
       </PhotoGrid>
+
+      {selectedPhoto && (
+        <PhotoModal onClick={handleModalClick}>
+          <ModalContent onClick={(e) => e.stopPropagation()}>
+            <CloseButton onClick={closePhotoModal}>×</CloseButton>
+            <ModalImage 
+              src={photoApi.getImageUrl(selectedPhoto)} 
+              alt={selectedPhoto.caption}
+            />
+            <ModalCaption>
+              {selectedPhoto.caption}
+            </ModalCaption>
+          </ModalContent>
+        </PhotoModal>
+      )}
     </PhotosContainer>
   );
 };

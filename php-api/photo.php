@@ -10,8 +10,21 @@ function getAllPhotos($pdo) {
         $stmt->execute();
         $photos = $stmt->fetchAll();
         
+        // Convert field names to match React expectations (camelCase)
+        $formattedPhotos = array_map(function($photo) {
+            return [
+                'id' => $photo['Id'],
+                'caption' => $photo['Caption'],
+                'fileName' => $photo['FileName'],
+                'filePath' => $photo['FilePath'],
+                'contentType' => $photo['ContentType'],
+                'fileSize' => $photo['FileSize'],
+                'uploadedDate' => $photo['UploadedDate']
+            ];
+        }, $photos);
+        
         // Return JSON response (like your C# Ok(photos))
-        echo json_encode($photos);
+        echo json_encode($formattedPhotos);
     } catch (Exception $e) {
         // Error handling like your C# try/catch
         http_response_code(500);
@@ -34,8 +47,19 @@ function getPhoto($pdo, $id) {
             return;
         }
         
+        // Convert field names to match React expectations (camelCase)
+        $formattedPhoto = [
+            'id' => $photo['Id'],
+            'caption' => $photo['Caption'],
+            'fileName' => $photo['FileName'],
+            'filePath' => $photo['FilePath'],
+            'contentType' => $photo['ContentType'],
+            'fileSize' => $photo['FileSize'],
+            'uploadedDate' => $photo['UploadedDate']
+        ];
+        
         // Same as your C# Ok(photo)
-        echo json_encode($photo);
+        echo json_encode($formattedPhoto);
     } catch (Exception $e) {
         http_response_code(500);
         echo json_encode(['error' => 'Error retrieving photo']);
@@ -147,8 +171,19 @@ function uploadPhoto($pdo) {
         $stmt->execute([$newId]);
         $newPhoto = $stmt->fetch();
         
+        // Convert field names to match React expectations (camelCase)
+        $formattedPhoto = [
+            'id' => $newPhoto['Id'],
+            'caption' => $newPhoto['Caption'],
+            'fileName' => $newPhoto['FileName'],
+            'filePath' => $newPhoto['FilePath'],
+            'contentType' => $newPhoto['ContentType'],
+            'fileSize' => $newPhoto['FileSize'],
+            'uploadedDate' => $newPhoto['UploadedDate']
+        ];
+        
         http_response_code(201);
-        echo json_encode($newPhoto);
+        echo json_encode($formattedPhoto);
     } catch (Exception $e) {
         http_response_code(500);
         echo json_encode(['error' => 'Error uploading photo']);
