@@ -23,7 +23,7 @@ const WelcomeSection = styled.section`
 `;
 
 const WelcomeTitle = styled.h1`
-  font-size: 3.5rem;
+  font-size: 3.0rem;
   color: #ffffff;
   text-shadow: 0 0 20px rgba(139, 92, 246, 0.8);
   margin-bottom: 1rem;

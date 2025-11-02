@@ -1,4 +1,6 @@
-const API_BASE_URL = 'http://localhost:5138/api';
+const API_BASE_URL = process.env.NODE_ENV === 'production' 
+  ? 'https://api.stevenbam.co.uk/api' 
+  : 'http://localhost:5138/api';
 
 export interface BlogPost {
   id: number;
@@ -99,6 +101,9 @@ export const photoApi = {
   },
 
   getImageUrl(photo: Photo): string {
-    return `http://localhost:5138/${photo.filePath}`;
+    const baseUrl = process.env.NODE_ENV === 'production' 
+      ? 'https://api.stevenbam.co.uk' 
+      : 'http://localhost:5138';
+    return `${baseUrl}/${photo.filePath}`;
   }
 };

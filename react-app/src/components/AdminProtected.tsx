@@ -156,8 +156,29 @@ const AdminProtected: React.FC<AdminProtectedProps> = ({ children, onAuthenticat
 
   return (
     <>
-      <div onClick={handleClick} style={{ cursor: isAuthenticated ? 'default' : 'pointer' }}>
+      <div 
+        onClick={handleClick} 
+        onMouseDown={handleClick}
+        style={{ 
+          cursor: isAuthenticated ? 'default' : 'pointer',
+          position: 'relative'
+        }}
+      >
         {children}
+        {!isAuthenticated && (
+          <div 
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              zIndex: 1,
+              cursor: 'pointer'
+            }}
+            onClick={handleClick}
+          />
+        )}
       </div>
       
       {showModal && (

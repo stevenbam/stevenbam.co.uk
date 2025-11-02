@@ -205,13 +205,13 @@ const Blog: React.FC = () => {
       
       <CreatePostSection>
         <h3 style={{ color: '#a78bfa', marginBottom: '1rem' }}>Create New Post</h3>
-        <AdminProtected 
-          isAuthenticated={isAdminAuthenticated}
-          onAuthenticated={() => setIsAdminAuthenticated(true)}
-        >
-          <form onSubmit={handleSubmit}>
-            <FormGroup>
-              <Label htmlFor="title">Post Title:</Label>
+        <form onSubmit={handleSubmit}>
+          <FormGroup>
+            <Label htmlFor="title">Post Title:</Label>
+            <AdminProtected 
+              isAuthenticated={isAdminAuthenticated}
+              onAuthenticated={() => setIsAdminAuthenticated(true)}
+            >
               <Input
                 type="text"
                 id="title"
@@ -221,10 +221,15 @@ const Blog: React.FC = () => {
                 required
                 disabled={!isAdminAuthenticated}
               />
-            </FormGroup>
-            
-            <FormGroup>
-              <Label htmlFor="content">Post Content:</Label>
+            </AdminProtected>
+          </FormGroup>
+          
+          <FormGroup>
+            <Label htmlFor="content">Post Content:</Label>
+            <AdminProtected 
+              isAuthenticated={isAdminAuthenticated}
+              onAuthenticated={() => setIsAdminAuthenticated(true)}
+            >
               <TextArea
                 id="content"
                 value={newPost.content}
@@ -233,13 +238,18 @@ const Blog: React.FC = () => {
                 required
                 disabled={!isAdminAuthenticated}
               />
-            </FormGroup>
-            
+            </AdminProtected>
+          </FormGroup>
+          
+          <AdminProtected 
+            isAuthenticated={isAdminAuthenticated}
+            onAuthenticated={() => setIsAdminAuthenticated(true)}
+          >
             <Button type="submit" disabled={loading || !isAdminAuthenticated}>
               {loading ? 'Publishing...' : 'Publish Post'}
             </Button>
-          </form>
-        </AdminProtected>
+          </AdminProtected>
+        </form>
       </CreatePostSection>
 
       {error && (
